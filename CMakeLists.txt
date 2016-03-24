@@ -124,8 +124,13 @@ set(buildvm_sources
 	${LUAJIT_HOST_DIR}/buildvm_lib.c
 	${LUAJIT_HOST_DIR}/buildvm_peobj.c
 	${LUAJIT_HOST_DIR}/buildvm.h
-	${LUAJIT_HOST_DIR}/buildvm_libbc.h
 )
+
+if (NOT WIN32)
+	list(APPEND buildvm_sources
+		${LUAJIT_HOST_DIR}/buildvm_libbc.h
+	)
+endif()
 
 add_executable(buildvm
 	${buildvm_sources}
