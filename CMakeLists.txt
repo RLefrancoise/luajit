@@ -30,9 +30,15 @@ PREPEND(ALL_LIB_PATHS ${LUAJIT_SRC_DIR} ${ALL_LIB})
 set(LUAJIT_OUT_HOST_DIR ${CMAKE_CURRENT_BINARY_DIR}/host)
 
 set(LUAJIT_ENABLE_LUA52COMPAT ON CACHE BOOL "Enable Lua 5.2 Compatibility mode")
+set(LUAJIT_ENABLE_GC64 ON CACHE BOOL "Enable new GC64")
 
 if (LUAJIT_ENABLE_LUA52COMPAT)
 	add_definitions(-DLUAJIT_ENABLE_LUA52COMPAT)
+endif()
+
+
+if (LUAJIT_ENABLE_GC64)
+	add_definitions(-DLUAJIT_ENABLE_GC64)
 endif()
 
 set(DYNASM_FLAGS
@@ -49,7 +55,7 @@ else()
 endif()
 
 if (LJARCH STREQUAL x64)
-	set(DASM_ARCH x86)
+	set(DASM_ARCH x64)
 elseif (LJARCH STREQUAL x86)
 	set(DASM_ARCH x86)
 elseif (LJARCH STREQUAL arm)
@@ -111,6 +117,8 @@ endif()
 set(BUILDVM_ARCH_H
 	${LUAJIT_OUT_HOST_DIR}/buildvm_arch.h
 )
+
+message("Using vm_${DASM_ARCH}.dasc with architexture ${LJARCH}")
 
 add_custom_command(OUTPUT ${BUILDVM_ARCH_H}
 	COMMAND $<TARGET_FILE:minilua> ${LUAJIT_DYNASM_DIR}/dynasm.lua -LN ${DYNASM_FLAGS} -o ${BUILDVM_ARCH_H} ${LUAJIT_SRC_DIR}/vm_${DASM_ARCH}.dasc
